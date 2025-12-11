@@ -319,3 +319,141 @@ Vue中有2种数据绑定的方法：
 </html>
 ```
 
+# 06、数据代理
+
+## 1. 回顾Object.defineProperty
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <script type="text/javascript">
+        let number = 18
+        let person = {
+            name: '张三',
+            sex: '男',
+            // age: 18
+        }
+
+        Object.defineProperty(person,'age',{
+            // value:18,
+            // enumerable:true,   //控制属性是否可以被 枚举，默认值是false
+            // writable:true ,    //控制属性是否可以被 修改，默认值是false
+            // configurable:true  //控制属性是否可以被 删除，默认值是false
+
+            // 当有人读取Person的age属性时，get函数（geeter）就会被调用，并且返回值就是age的值
+            get:function(){
+                console.log('有人读取age属性了');
+                
+                return number
+            },
+
+            // 当有人修改Person的age属性时，set函数（seeter）就会被调用，并且会收到修改的具体值
+            set(value){
+                console.log('有人修改了age属性，并且值是', value);
+                number = value
+                
+            }
+        })
+        console.log(person);
+
+        console.log(Object.keys(person));
+        
+        
+
+    </script>
+</body>
+</html>
+```
+
+## 2. 何为数据代理
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 数据代理：通过一个对象 代理对另外一个对象中的属性的操作（读/写） -->
+     <script type="text/javascript">
+        let obj = {x:100}
+        let obj2 = {y:200}
+
+        Object.defineProperty(obj2,'x',{
+            get(){
+                return obj.x
+            },
+            set(value){
+                obj.x=value
+            }
+        })
+     </script>
+</body>
+</html>
+```
+
+## 3. Vue中的数据代理
+
+![image-20251212000428528](Vue 2+3.assets/image-20251212000428528.png)
+
+1. Vue中的数据代理：
+
+   ​	通过vm对象来代理data对象中属性的操作（读/写）
+
+2. Vue中数据代理的好处：
+
+   ​	更加方便的操作data中的数据
+
+3. 基本原理：
+
+   ​	通过Pbject.defineProperty()把data对象中所有属性添加到vm上。
+
+   ​	为每一个添加到vm上的属性，都指定一个getter、setter方法
+
+   ​	在getter、setter、内部去操作（读/写)data中对应的属性。
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title></title>
+       <!-- 引入vue -->
+       <script type="text/javascript" src="../js/vue.js"></script>
+   </head>
+   <body>  
+       <!-- 准备好一个容器 -->
+        <div id="root">
+           <h1>学校名字 {{name}}</h1>
+           <h1>学校地址 {{address}}</h1>
+        </div>
+   
+        <script type="text/javascript">
+           Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+   
+           // 创建vue实例
+           const vm = new Vue({
+               el: '#root',  //el用于指定当前Vue实例为哪个容器服务，值通常为css选择器字符串，这里的#root，选择的就是上面id="root"的那个容器
+               // data中用于存储数据，数据供el所指定的容器去使用，值我们先暂时写成一个对象。
+               data: {
+                   name: '信农',
+                   address: '信阳'
+               }
+           })
+        </script>
+   </body>
+   </html>
+   ```
+
+   
