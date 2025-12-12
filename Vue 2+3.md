@@ -639,3 +639,75 @@ vue中的事件修饰符：
 </html>
 ```
 
+## 3.键盘事件
+
+1. Vue中常用的按键别名
+
+​		回车：enter
+
+​		删除：delete  (捕获”删除“和”退格“，这两个按键，即delete和backspace)
+
+​		退出：esc
+
+​		空格：space
+
+​		换行：tab（特殊，必须配合keydown使用，不然按下tab之后焦点被移走，绑定的keyup方法就不会被执行）
+
+​		上下左右： up  down  left  right
+
+2. Vue中未提供别名的按键，可以使用按键原始的key值去绑定，但是要注意转为kebab-case（短横线命名）。	
+
+ 		例如：CapsLock要写成caps-lock  使用的时候就是  @keyup.caps-lock="showInfo"
+
+3. 系统修饰键（用法特殊）：ctrl  shift   alt  meta
+
+​		配合keyup使用，按下修饰键的同时，再按下其他按键，随后释放其他按键，绑定的事件才会触发
+
+​		配合keydown使用，正常触发事件
+
+​		@keyup.ctrl.y    这样绑定的就是ctrl+y的keyup事件，ctrl+其他按键不再触发事件
+
+4. 也可以使用keyCode去指定具体的按键（不推荐，将会废除）
+5. Vue.config.keyCode.自定义键名 = 键码，可以去定制按键别名
+
+```htmL
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>键盘事件</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        <input type="text" placeholder="按下回车提示输入" @keyup.enter="showInfo">
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                
+            },
+            methods:{
+                showInfo(e){
+                    // console.log(e.keyCode);
+                    // if(e.keyCode !== 13){
+                    //     return
+                    // }
+                    console.log(e.target.value);
+                    
+                }
+            }
+        })
+     </script>
+</body>
+</html>
+```
+

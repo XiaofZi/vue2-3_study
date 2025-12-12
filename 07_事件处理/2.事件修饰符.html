@@ -17,6 +17,8 @@
         <!-- stop：阻止事件冒泡（常用） -->
          <div class="demo1" @click="showInfo">
             <button @click.stop="showInfo">点我提示信息</button>
+            <!-- 修饰符可以连续写 -->
+             <!-- <a href="https://www.baidu.com" @click.stop.prevent="showInfo">点我提示信息</a> -->
          </div>
 
          <!-- once：事件只触发一次（常用） -->
