@@ -456,4 +456,186 @@ Vue中有2种数据绑定的方法：
    </html>
    ```
 
-   
+
+
+
+# 07、事件处理
+
+## 1. 事件的基本使用
+
+
+
+1. 使用v-on:xxx 或 @xxx 绑定事件，其中xxx是事件名
+2. 事件的回调需要配置在methods对象中，最终会在vm上
+3. methods中配置的函数，不要使用箭头函数，否则this就不是vm了
+4. methods中配置的函数，都是被vue所管理的函数，this指向的是vm  或  组件实例对象
+5. @click="demo" 和 @click="demo($event)" 效果一致，但后者可以传参
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件的基本使用</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2>欢迎来到{{name}}学习</h2>
+        <!-- <button v-on:click="showInfo">点我提示信息</button> -->
+        <button @click="showInfo1">点我提示信息1（不传参）</button>
+        <button @click="showInfo2(66,$event)">点我提示信息2（传参）</button>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                name: '尚硅谷'
+            },
+            methods: {                
+                showInfo1(event) {
+                    // console.log(event.target.innerText);
+                    // console.log(this);   //此处的this是vm
+                    alert('info1')
+                },
+                showInfo2(number,event) {
+                    // console.log(event.target.innerText);
+                    // console.log(this);   //此处的this是vm
+                    // alert('info2')
+                    console.log(number,event);
+                    
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 2.事件修饰符
+
+vue中的事件修饰符：
+
+	1. preven：阻止默认事件（常用）
+	1. stop：阻止事件冒泡（常用）
+	1. once：事件只触发一次（常用）
+	1. capture：使用事件的捕获模式
+	1. self：只有event.target是当前操作元素时才触发事件
+	1. passive：事件的默认行为立即执行，无需等待事件回调执行完毕
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件修饰符</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        <h2>欢迎来到{{name}}学习</h2>
+        <!-- preven：阻止默认事件（常用） -->
+        <a href="https://www.baidu.com" @click.prevent="showInfo">点我提示信息</a>
+
+        <!-- stop：阻止事件冒泡（常用） -->
+         <div class="demo1" @click="showInfo">
+            <button @click.stop="showInfo">点我提示信息</button>
+         </div>
+
+         <!-- once：事件只触发一次（常用） -->
+         <button @click.once="showInfo">点我提示信息</button>
+
+         <!-- capture：使用事件的捕获模式 -->
+          <div class="box1" @click.capture="showMsg(1)">
+            div1
+            <div class="box2" @click="showMsg(2)">div2</div>
+          </div>
+
+          <!-- self：只有event.target是当前操作元素时才触发事件 -->
+          <div class="demo1" @click.self="showInfo">
+            <button @click="showInfo">点我提示信息</button>
+         </div>
+
+         <!-- passive：事件的默认行为立即执行，无需等待事件回调执行完毕 -->
+          <ul @wheel.passive="demo" class="list">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+          </ul>
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                name: '尚硅谷'
+            },
+            methods: {
+                showInfo(e){
+                    alert('info')
+                    // console.log(e.target);
+                    
+                },
+                showMsg(msg){
+                    console.log(msg);
+                    
+                },
+                demo(){
+                    // console.log('@');
+                    
+                    for (let index = 0; index < 10000; index++) {
+                        console.log('%');
+                    }
+                    console.log('循环结束了');
+                    
+                }
+            }
+        })
+     </script>
+</body>
+<style>
+    *{
+        margin-top: 20px;
+    }
+    .demo1{
+        height: 50px;
+        background-color: skyblue;
+    }
+    .box1{
+        padding: 5px;
+        background-color: skyblue;
+    }
+    .box2{
+        padding: 5px;
+        background-color: pink;
+    }
+    .list{
+        width: 200px;
+        height: 200px;
+        background-color: skyblue;
+        overflow: auto;
+        li{
+            height: 100px;
+        }
+    }
+</style>
+</html>
+```
+
