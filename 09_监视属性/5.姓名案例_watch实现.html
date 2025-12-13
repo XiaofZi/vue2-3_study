@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        姓: <input type="text" v-model="firstName"> <br>
+        名: <input type="text" v-model="lastName"> <br>
+        全名：<span>{{fullName}}</span>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                firstName: '张',
+                lastName: '三',
+                fullName: '张-三'
+            },
+            computed: {
+
+            },
+            watch: {
+                firstName: {
+                    handler(newValue, oldValue) {
+                        setTimeout(() => {
+                            console.log(newValue, oldValue);
+                            vm.fullName = newValue +'-'+ vm.lastName;
+                        }, 3000);
+                    }
+                },
+                lastName: {
+                    handler(newValue, oldValue) {
+                        console.log(newValue, oldValue);
+                        vm.fullName = vm.firstName +'-'+ newValue;
+                    }
+                },
+            }
+
+        })
+    </script>
+</body>
+
+</html>
