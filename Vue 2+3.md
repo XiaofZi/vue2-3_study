@@ -147,7 +147,7 @@ Vue中有2种数据绑定的方法：
 
    ​         双向绑定一般都应用在表单类元素上（如：input，select，等）。
 
-​		v-model:value   可以简写为   v-mode   ，因为v-model默认收集的就是value值。
+​		v-model:value   可以简写为   v-model   ，因为v-model默认收集的就是value值。
 
 
 
@@ -711,3 +711,212 @@ vue中的事件修饰符：
 </html>
 ```
 
+# 08、计算属性
+
+## 1.姓名案例_插值语法实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        姓: <input type="text" v-model="firstName"> <br> 
+        名: <input type="text" v-model="lastName"> <br>
+        全名：<span>{{firstName.slice(0,3)}}-{{lastName}}</span>
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                firstName: '张',
+                lastName: '三'
+            }
+        })
+     </script>
+</body>
+</html>
+```
+
+## 2.姓名案例_methods实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        姓: <input type="text" v-model="firstName"> <br> 
+        名: <input type="text" v-model="lastName"> <br>
+        全名：<span>{{fullName()}}</span>
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                firstName: '张',
+                lastName: '三'
+            },
+            methods:{
+                fullName(){
+                    return this.firstName + '-' + this.lastName
+                }
+            }
+        })
+     </script>
+</body>
+</html>
+```
+
+## 3.姓名案例_计算属性实现
+
+计算属性：
+
+	1. 定义：要用的属性不存在，需要通过已有属性计算得来。
+	1. 原理：底层借助了Object.defineproperty方法提供的getter和setter
+	1. get函数什么时候执行？
+
+​		（1）初次读取时会执行一次。
+
+​		（2）当依赖的数据发生改变时会被再次调用
+
+4. 优势：与methods实现相比。内部有缓存机制（复用），效率更高，调试方便。
+
+5. 备注：
+
+    	（1）计算属性最终会出现在vm上，直接读取使用即可。	
+
+   ​	 （2）如果计算属性要被修改，那么必须写set函数去响应修改，并且set中要引起计算时依赖的数据发生改变（就是在set里把用到的数据改成新数据）。
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title></title>
+       <!-- 引入vue -->
+       <script type="text/javascript" src="../js/vue.js"></script>
+   </head>
+   <body>  
+       <!-- 准备好一个容器 -->
+        <div id="root">
+           姓: <input type="text" v-model="firstName"> <br> 
+           名: <input type="text" v-model="lastName"> <br>
+           全名：<span>{{fullName}}</span>
+        </div>
+   
+        <script type="text/javascript">
+           Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+   
+           // 创建vue实例
+           const vm = new Vue({
+               el: '#root',  
+               data: {
+                   firstName: '张',
+                   lastName: '三'
+               },
+               computed: {
+                   fullName: {
+                       // get有什么作用？当有人读取fullName时，get就会被调用，并且返回值就作为fullName的值
+                       // get什么时候调用？1.初次读取fullName时    2.所依赖的数据发生变化时
+                       get(){
+                           // 这里的this是vm
+                           console.log(this);
+                           return this.firstName + '-' + this.lastName
+                       },
+                       // set什么时候调用？当fullName被修改时
+                       set(value){
+                           console.log(value);
+                           const arr = value.split('-')
+                           this.firstName = arr[0]
+                           this.lastName = arr[1]
+                       }
+                   }
+               }
+           })
+        </script>
+   </body>
+   </html>
+   ```
+
+   ## 4.姓名案例_计算属性简写
+
+   简写：只有geter没有setter的时候可以简写
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title></title>
+       <!-- 引入vue -->
+       <script type="text/javascript" src="../js/vue.js"></script>
+   </head>
+   <body>  
+       <!-- 准备好一个容器 -->
+        <div id="root">
+           姓: <input type="text" v-model="firstName"> <br> 
+           名: <input type="text" v-model="lastName"> <br>
+           全名：<span>{{fullName}}</span>
+        </div>
+   
+        <script type="text/javascript">
+           Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+   
+           // 创建vue实例
+           const vm = new Vue({
+               el: '#root',  
+               data: {
+                   firstName: '张',
+                   lastName: '三'
+               },
+               computed: {
+                   // 完整写法
+                   // fullName: {
+                   //     get(){
+                   //         return this.firstName + '-' + this.lastName
+                   //     },
+                   //     set(value){
+                   //         console.log(value);
+                   //         const arr = value.split('-')
+                   //         this.firstName = arr[0]
+                   //         this.lastName = arr[1]
+                   //     }
+                   // }
+   
+                   // 简写
+                   fullName(){
+                       return this.firstName + '-' + this.lastName
+                   }
+               }
+           })
+        </script>
+   </body>
+   </html>
+   ```
+
+   
