@@ -1608,3 +1608,56 @@ v-for指令：
 ​		（1）最好使用每条数据的唯一标识作为key，比如id,手机号，身份证号，学号等
 
 ​		（2）如果不存在对数据的逆序添加，逆序删除等破坏顺序的操作，仅用于渲染列表用于展示，使用index作为key是没有问题的。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本列表</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表</h2>
+        <button @click="add">添加一个老刘</button>
+        <ul>
+            <li v-for="(person,index) in persons" :key="index">
+                {{person.name}}-{{person.age}}
+                <input type="text">
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                persons: [
+                    { id: '001', name: '张三', age: '18' },
+                    { id: '002', name: '李四', age: '19' },
+                    { id: '003', name: '王五', age: '20' }
+                ]
+            },
+            methods: {
+                add(){
+                    let Liu = {id: '004', name: '老刘', age: '40'};
+                    this.persons.unshift(Liu)
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
