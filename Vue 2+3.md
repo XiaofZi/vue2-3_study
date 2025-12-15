@@ -1290,4 +1290,113 @@ computed和watch之间的区别：
 
 # 10、绑定样式
 
-1.
+1. class样式
+
+​	写法：class='xxx'  xxx可以是字符串，对象，数组
+
+​		字符串写法，适用于样式的类名不确定，需要动态指定
+
+​		对象写法，适用于样式的个数确定，类名也确定，但是要动态决定用不用
+
+​		数组写法，适用于样式的个数不确定，类名也不确定
+
+2. style样式
+
+​		:style = "{fintSize:xxx}" 其中xxx是动态值
+
+​		:style = "[a,b]"  其中a、b是样式对象。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绑定样式</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <!-- 绑定class样式 字符串写法，适用于样式的类名不确定，需要动态指定 -->
+        <div class="basic" :class="mood" @click="changeMood">test</div>
+        <br><br>
+        <!-- 绑定class样式 数组写法，适用于样式的个数不确定，类名也不确定 -->
+        <div class="basic" :class="classArr">test</div>
+        <br><br>
+        <!-- 绑定class样式 对象写法，适用于样式的个数确定，类名也确定，但是要动态决定用不用 -->
+        <div class="basic" :class="classObj">test</div>
+
+        <br>
+        <!-- 绑定style样式，对象写法 -->
+        <div class="basic" :style="styleObj">test</div>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                mood: 'normal',
+                classArr: ['class1', 'class2', 'class3'],
+                classObj: {
+                    class1: true,
+                    class2: true
+                },
+                styleObj: {
+                    fontSize: '40px',
+                    color: 'red',
+                    backgroundColor: 'orange'
+                }
+            },
+            methods: {
+                changeMood() {
+                    moodArr = ['happy', 'normal', 'sad']
+                    let index = Math.floor(Math.random() * 3)
+                    this.mood = moodArr[index]
+                }
+            },
+        })
+    </script>
+</body>
+<style>
+    .basic {
+        width: 200px;
+        height: 200px;
+        border: 2px black solid;
+    }
+
+    .happy {
+        background: linear-gradient(45deg, #fada61 0.000%, #ff9188 50.000%, #ff5acd 100.000%);
+    }
+
+    .sad {
+        background: linear-gradient(90deg, #a47451 0.000%, #9c9881 16.667%, #73a09d 33.333%, #3b899a 50.000%, #095b79 66.667%, #002847 83.333%, #000116 100.000%);
+    }
+
+    .normal {
+        background: linear-gradient(45deg, #8ec5fc 0.000%, #8dd3ff 25.000%, #a1d8ff 50.000%, #c1d2ff 75.000%, #e0c3ff 100.000%);
+    }
+
+    .class1 {
+        background-color: rgb(156, 225, 156);
+    }
+
+    .class2 {
+        font-size: x-large;
+        text-shadow: 5px 5px 5px #ffb0b0;
+    }
+
+    .class3 {
+        border-radius: 20px;
+    }
+</style>
+
+</html>
+```
+

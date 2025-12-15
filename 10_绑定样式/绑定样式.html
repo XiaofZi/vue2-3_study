@@ -20,6 +20,10 @@
         <br><br>
         <!-- 绑定class样式 对象写法，适用于样式的个数确定，类名也确定，但是要动态决定用不用 -->
         <div class="basic" :class="classObj">test</div>
+
+        <br>
+        <!-- 绑定style样式，对象写法 -->
+        <div class="basic" :style="styleObj">test</div>
     </div>
 
     <script type="text/javascript">
@@ -31,9 +35,14 @@
             data: {
                 mood: 'normal',
                 classArr: ['class1', 'class2', 'class3'],
-                classObj:{
-                    class1:true,
-                    class2:true
+                classObj: {
+                    class1: true,
+                    class2: true
+                },
+                styleObj: {
+                    fontSize: '40px',
+                    color: 'red',
+                    backgroundColor: 'orange'
                 }
             },
             methods: {
