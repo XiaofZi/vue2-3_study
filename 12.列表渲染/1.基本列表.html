@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本列表</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表</h2>
+        <ul>
+            <li v-for="(person,index) in persons" :key="index">
+                {{person.name}}-{{person.age}}
+            </li>
+        </ul>
+        <!-- 遍历对象 -->
+        <h2>车辆信息</h2>
+        <ul>
+            <li v-for="(value,key) in car" :key="key">
+                {{key}}-{{value}}
+            </li>
+        </ul>
+        <!-- 遍历字符串 -->
+        <h2>遍历字符串：hello（用的少）</h2>
+        <ul>
+            <li v-for="(str,index) in str" :key="index">
+                {{str}}-{{index}}
+            </li>
+        </ul>
+        <!-- 遍历指定次数 -->
+         <h2>遍历指定次数（用的少）</h2>
+        <ul>
+            <li v-for="(numbers,index) in 5" :key="index">
+                {{numbers}}-{{index}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                persons: [
+                    { id: '001', name: '张三', age: '18' },
+                    { id: '002', name: '李四', age: '19' },
+                    { id: '003', name: '王五', age: '20' }
+                ],
+                car: {
+                    name: "奥迪",
+                    color: 'red',
+                    price: '50万'
+                },
+                str: 'hello'
+            }
+        })
+    </script>
+</body>
+
+</html>

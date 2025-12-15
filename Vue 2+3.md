@@ -1400,3 +1400,211 @@ computed和watch之间的区别：
 </html>
 ```
 
+# 11、条件渲染
+
+1. v-if
+
+   ​	（1）v-if="表达式"
+
+​		（2）v-else-if="表达式"
+
+​		（3）v-else="表达式"
+
+​	适用于：切换频率低的场景
+
+​	特点：不展示的DOM元素将会被直接移除
+
+​	注意：v-if可以和，v-else-if，v-else一起使用，但他们必须连续使用，中间不能被打断
+
+2. v-show
+
+​	写法v-show="表达式"
+
+​	适用于：切换频率高的场景
+
+​	特点：不展示的DOM元素未被移除，仅仅是使用  display：none  样式隐藏掉
+
+3. 备注：使用v-if时，元素可能无法获取到，但使用v-show一定可以获取到
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+
+        <!-- 使用v-show做条件渲染 -->
+        <h2 v-show="true">欢迎来到{{name}}</h2>
+        <!-- 使用v-if做条件渲染 -->
+        <h2 v-if="false">欢迎来到{{name}}</h2>
+        <hr>
+        <h2>{{n}}</h2>
+        <button @click="n++">点我N+1</button>
+        <h2 v-show="n === 1">n=1</h2>
+        <h2 v-show="n === 2">n=2</h2>
+        <h2 v-show="n === 3">n=3</h2>
+        <hr>
+        <h2 v-if="n === 1">n=1</h2>
+        <h2 v-if="n === 2">n=2</h2>
+        <h2 v-if="n === 3">n=3</h2>
+        <hr>
+        <!-- v-if配合v-else-if配合v-else，他们三个不允许中间断掉，必须连续使用 -->
+        <h2 v-if="n === 1">n=1</h2>
+        <h2 v-else-if="n === 2">n=2</h2>
+        <h2 v-else-if="n === 3">n=3</h2>
+        <h2 v-else>n不是1，2，3</h2>
+        <!-- v-if配合template，
+             template不会影响页面结构，在渲染的时候不会加载，而是直接加载template内部的结构
+             所以不能配合v-show使用，只能配合v-if -->
+        <template v-if="n === 4">
+            <h2>template</h2>
+            <h2>template</h2>
+            <h2>template</h2>
+        </template>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                name: '尚硅谷',
+                a: false,
+                n: 0
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+# 12、列表渲染
+
+## 1.列表渲染
+
+v-for指令：
+
+	1. 用于展示列表数据
+	1. 语法：v-for="(item,index) in  xxx" :key="yyy"
+	1. 可遍历：数组、对象、字符串（用的很少），指定次数（用的很少）
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本列表</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表</h2>
+        <ul>
+            <li v-for="(person,index) in persons" :key="index">
+                {{person.name}}-{{person.age}}
+            </li>
+        </ul>
+        <!-- 遍历对象 -->
+        <h2>车辆信息</h2>
+        <ul>
+            <li v-for="(value,key) in car" :key="key">
+                {{key}}-{{value}}
+            </li>
+        </ul>
+        <!-- 遍历字符串 -->
+        <h2>遍历字符串：hello（用的少）</h2>
+        <ul>
+            <li v-for="(str,index) in str" :key="index">
+                {{str}}-{{index}}
+            </li>
+        </ul>
+        <!-- 遍历指定次数 -->
+         <h2>遍历指定次数（用的少）</h2>
+        <ul>
+            <li v-for="(numbers,index) in 5" :key="index">
+                {{numbers}}-{{index}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                persons: [
+                    { id: '001', name: '张三', age: '18' },
+                    { id: '002', name: '李四', age: '19' },
+                    { id: '003', name: '王五', age: '20' }
+                ],
+                car: {
+                    name: "奥迪",
+                    color: 'red',
+                    price: '50万'
+                },
+                str: 'hello'
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 2.key的原理
+
+面试题：react,Vue中的key有什么作用？（key的内部原理）
+
+1. 虚拟dom中key的作用：
+
+   ​	key是虚拟dom对象的标识，当状态中的数据发生变化时，vue会根据【新数据】生成【新的虚拟dom】
+
+   ​	随后Vue进行【新虚拟dom】与【旧虚拟dom】的差异比较，比较规则如下：
+
+2. 对比规则：
+
+​		（1）旧虚拟dom中找到了与新虚拟dom中相同的key
+
+​				若虚拟dom中内容没变，直接使用之前的真实dom
+
+​				若虚拟dom中内容变了，则生成新的真是dom，随后替换掉页面中之前的真实dom
+
+​		（2）旧虚拟dom中未找到与新虚拟dom相同的key
+
+​				创建新的真实dom，随后渲染到页面。
+
+3. 用index作为key可能会引发的问题：
+
+​		（1）若对数据进行：逆序添加，逆序删除等破坏顺序的操作：
+
+​				会产生没有必要的真实dom更新 ===>   界面效果没问题，但效率低
+
+​		（2）如果结构中还包含输入类dom:
+
+​				会产生错误dom更新  ===>  界面有问题
+
+4. 开发中如何选择key?
+
+​		（1）最好使用每条数据的唯一标识作为key，比如id,手机号，身份证号，学号等
+
+​		（2）如果不存在对数据的逆序添加，逆序删除等破坏顺序的操作，仅用于渲染列表用于展示，使用index作为key是没有问题的。
