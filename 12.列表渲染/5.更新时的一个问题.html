@@ -43,8 +43,11 @@
                     // this.persons[0].age = '19';
                     // this.persons[0].sex = '男';
 
-                    // vue没检测到修改
-                    this.persons[0] = { id: '001', name: '马冬', age: '19', sex: '男' }
+                    // vue没检测到修改，不奏效
+                    // this.persons[0] = { id: '001', name: '马冬', age: '19', sex: '男' }
+
+                    // 奏效
+                    this.persons.splice(0,1,{ id: '001', name: '马冬', age: '19', sex: '男' })
                 }
             },
         })
