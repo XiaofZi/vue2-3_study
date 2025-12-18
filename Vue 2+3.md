@@ -1810,3 +1810,421 @@ v-for指令：
 </html>
 ```
 
+## 5.更新时的一个问题
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更新时的一个问题</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表</h2>
+        <button @click="updateMei">修改马冬梅的信息</button>
+        <ul>
+            <li v-for="(person,index) in persons" :key="person.id">
+                {{person.name}}-{{person.age}}-{{person.sex}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                persons: [
+                    { id: '001', name: '马冬梅', age: '28', sex: '女' },
+                    { id: '002', name: '周冬雨', age: '29', sex: '女' },
+                    { id: '003', name: '周杰伦', age: '20', sex: '男' },
+                    { id: '004', name: '温兆伦', age: '11', sex: '男' }
+                ]
+            },
+            methods: {
+                updateMei(){
+                    // 奏效
+                    // this.persons[0].name = '马东';
+                    // this.persons[0].age = '19';
+                    // this.persons[0].sex = '男';
+
+                    // vue没检测到修改，不奏效
+                    // this.persons[0] = { id: '001', name: '马冬', age: '19', sex: '男' }
+
+                    // 奏效
+                    this.persons.splice(0,1,{ id: '001', name: '马冬', age: '19', sex: '男' })
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 6.Vue监测数据改变的原理-对象
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2>学校名称：{{name}}</h2>
+        <h2>学校地址：{{address}}</h2>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                name: '尚硅谷',
+                address: '北京',
+                student: {
+                    name:'tom',
+                    age:{
+                        rAge:18,
+                        sAge:29
+                    },
+                    friends:[{name:'lihua',age:18}]
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 7.模拟一个数据监测
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+</body>
+<script>
+    let data = {
+        name: '尚硅谷',
+        address: '北京',
+        a: {
+            b: 1
+        }
+    }
+    // 创建一个监视的实例对象，用于监测data中属性的变化
+    let obs = new Observer(data);
+    console.log(obs);
+    // 准备一个vm实例对象
+    let vm = {}
+    console.log(vm);
+    vm._data = data = obs
+
+    function Observer(obj) {
+        let keys = Object.keys(obj)
+
+        // 遍历
+        keys.forEach((k) => {
+            Object.defineProperty(this, k, {
+                get() {
+                    return obj[k];
+                },
+                set(val) {
+                    console.log(`${k}被修改了，我要去解析模板，生成虚拟dom....`);
+                    obj[k] = val;
+                }
+            })
+        })
+
+    }
+</script>
+
+</html>
+```
+
+## 8.Vue.set的使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h1>学校信息</h1>
+        <h2>学校名称：{{name}}</h2>
+        <h2>学校地址：{{address}}</h2>
+        <h2>校长是:{{leader}}</h2>
+        <hr>
+        <h1>学生信息</h1>
+        <button @click="addSex">添加一个性别信息，默认值为男</button>
+        <h2>姓名：{{student.name}}</h2>
+        <h2 v-if="student.sex">性别：{{student.sex}}</h2>
+        <h2>年龄：真实{{student.age.rAge}},对外：{{student.age.sAge}}</h2>
+        <h2>朋友们</h2>
+        <ul>
+            <li v-for="(f,index) in student.friends" ::key="index">
+                {{f.name}}---{{f.age}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                name: '尚硅谷',
+                address: '北京',
+                student: {
+                    name: 'tom',
+                    age: {
+                        rAge: 18,
+                        sAge: 29
+                    },
+                    friends: [{ name: 'lihua', age: 18 }, { name: 'tony', age: 36 }]
+                }
+            },
+            methods: {
+                addSex(){
+                    // Vue.set(this.student,'sex','男')
+                    this.$set(this.student,'sex','男')
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 9.Vue监测数据改变的原理-数组
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h1>学校信息</h1>
+        <h2>学校名称：{{name}}</h2>
+        <h2>学校地址：{{address}}</h2>
+        <h2>校长是:{{leader}}</h2>
+        <hr>
+        <h1>学生信息</h1>
+        <button @click="addSex">添加一个性别信息，默认值为男</button>
+        <h2>姓名：{{student.name}}</h2>
+        <h2 v-if="student.sex">性别：{{student.sex}}</h2>
+        <h2>年龄：真实{{student.age.rAge}},对外：{{student.age.sAge}}</h2>
+        <h2>爱好</h2>
+        <ul>
+            <li v-for="(h,index) in student.hobby" :key="index">{{h}}</li>
+        </ul>
+        <h2>朋友们</h2>
+        <ul>
+            <li v-for="(f,index) in student.friends" :key="index">
+                {{f.name}}---{{f.age}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                name: '尚硅谷',
+                address: '北京',
+                student: {
+                    name: 'tom',
+                    age: {
+                        rAge: 18,
+                        sAge: 29
+                    },
+                    friends: [{ name: 'lihua', age: 18 }, { name: 'tony', age: 36 }],
+                    hobby: ['抽烟', '喝酒', '烫头']
+                }
+                
+            },
+            methods: {
+                addSex() {
+                    // Vue.set(this.student,'sex','男')
+                    this.$set(this.student, 'sex', '男')
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 10.总结Vue数据监测
+
+**Vue监视数据的原理**
+
+1. Vue会监测data中所有层次的数据
+2. 如何监视对象中的数据
+
+​		通过setter实现监视，并且要在 new  Vue  时就传入要监测的数据。
+
+​		（1）对象中后追加的属性，Vue默认不做响应式处理
+
+​		（2）如需给后添加的属性做响应式，请使用如下的API：
+
+​				Vue.set(target, propertName/index, value)或
+
+​				vm.$set(target, propertyName/index, value)
+
+3. 如何监测数组中的数据？
+
+   ​	通过包裹数组更新元素的方法实现，本质就是做了两件事：
+
+   ​	（1）调用原生对应的方法对数组进行更新
+
+   ​	（2）重写解析模板，进而更行页面
+
+4. 在Vue修改数组中的某一个元素一定要用如下的方法：
+
+​		（1）使用这些API:   push()        pop()        shift()	unshift()	splice()	sort()	reverse()   
+
+​		（2）Vue.set()  或者  vm.$set()
+
+特别注意：Vue.set()  和  vm.$set()   不能给vm或者vm的根数据对象（vm._data）添加属性！！！
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h1>学生信息</h1>
+        <button @click="student.age++">年龄加一岁</button>
+        <button @click="addSex">添加性别属性，默认值男</button>
+        <button @click="addFriend">在列表首位添加一个朋友</button>
+        <button @click="changeName">修改第一个朋友的名字为：张三</button>
+        <button @click="addHobby">添加一个爱好</button>
+        <button @click="changeFirstHobby">修改第一个爱好为：开车</button>
+        <button @click="removeSmoke">过滤掉爱好中的抽烟</button>
+        <h3>姓名：{{student.name}}</h3>
+        <h3>年龄：{{student.age}}</h3>
+        <h3 v-if="student.sex">性别：{{student.sex}}</h3>
+        <h3>爱好</h3>
+        <ul>
+            <li v-for="(h,index) in student.hobby" :key="index">{{h}}</li>
+        </ul>
+        <h3>朋友们：</h3>
+        <ul>
+            <li v-for="(f,index) in student.friends" ::key="index">{{f.name}}---{{f.age}}</li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                student: {
+                    name: 'tom',
+                    age: 18,
+                    hobby: ['smoking', 'drinking', 'tangTou'],
+                    friends: [
+                        { name: 'tommy', age: 19 },
+                        { name: 'jerry', age: 20 }
+                    ]
+                }
+            },
+            methods: {
+                addSex() {
+                    Vue.set(this.student, 'sex', '男')
+                },
+                addFriend() {
+                    this.student.friends.unshift({ name: 'jie', age: '24' })
+                },
+                changeName(){
+                    this.student.friends[0].name = '张三'
+                },
+                addHobby(){
+                    this.student.hobby.push('listenMusic')
+                },
+                changeFirstHobby(){
+                    // this.student.hobby.splice(0,1,'开车')
+                    // Vue.set(this.student.hobby,0,'kaiche')
+                    this.$set(this.student.hobby,0,'kaiChe')
+                },
+                removeSmoke(){
+                    this.student.hobby = this.student.hobby.filter((h)=>{
+                        return h !== 'smoking'
+                    })
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
