@@ -2228,3 +2228,203 @@ v-for指令：
 </html>
 ```
 
+# 13、收集表单数据
+
+
+
+```html
+若：<input type="text"/>，则v-model收集的是value值，用户输入的就是value值
+若：<input type="radio"/>，则v-model收集的是value值，并且要给标签配置value值
+若：<input type="checkbox"/>
+	1. 没有配置input的value属性，那么收集的就是checked（勾选  or  未勾选，是布尔值）
+	2. 配置input的value属性
+		（1）v-model的初始值是非数组，那么收集的就是checked（勾选  or  未勾选，是布尔值）
+		（2）v-model的初始值是数组，那么收集的就是value组成的数组
+备注：v-model的三个修饰符
+	lazy：失去焦点再收集数据
+	number：输入字符串转为有效的数字
+	trim：输入首尾空格过滤
+```
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <form @submit.prevent="submit">
+            <label for="demo">账号：</label>
+            <input type="text" id="demo" v-model.trim="userInfo.account">
+            <br>
+            密码：<input type="password" v-model="userInfo.password">
+            <br>
+            性别：
+            男<input type="radio" name="sex" v-model="userInfo.sex" value="boy">
+            女<input type="radio" name="sex" v-model="userInfo.sex" value="girl">
+            <br>
+            年龄：<input type="number" v-model.number="userInfo.age">
+            <br>
+            爱好：
+            学习<input type="checkbox" v-model="userInfo.hobby" value="study">
+            打游戏<input type="checkbox" v-model="userInfo.hobby" value="game">
+            吃饭<input type="checkbox" v-model="userInfo.hobby" value="eat">
+            <br>
+            所属校区
+            <select v-model="userInfo.city">
+                <option value="">请选择校区</option>
+                <option value="beijing">北京</option>
+                <option value="shanghai">上海</option>
+                <option value="shenzhen">深圳</option>
+                <option value="wuhan">武汉</option>
+            </select>
+            <br>
+            其他信息：
+            <textarea v-model.lazy="userInfo.other"></textarea>
+            <br>
+            <input type="checkbox" v-model="userInfo.agree">阅读并接收<a>用户协议</a>
+            <br>
+            <button>提交</button>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                userInfo: {
+                    account: '',
+                    password: '',
+                    sex: 'girl',
+                    age:'',
+                    hobby: [],
+                    city: 'beijing',
+                    other: '',
+                    agree: '',
+                }
+
+            },
+            methods: {
+                submit() {
+                    console.log(JSON.stringify(this.userInfo));
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+# 14、过滤器
+
+定义：对要显示的数据进行特定格式化后再显示（适用于一些简单逻辑的处理）
+
+语法：
+
+	1. 注册过滤器：Vue.filter(name,callback)  或 new Vue{filters:{}}
+	1. 使用过滤器:  {{ xxx | 过滤器名 }}  或  v-bind:属性 = “ xxx | 过滤器名 "
+
+备注：
+
+1. 过滤器也可以接收额外参数，多个过滤器也可以串联
+2. 过滤器并没有改变原本的数据，是产生新的对应的数据
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>过滤器</title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script type="text/javascript" src="../js/dayjs.min.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2>显示格式化后的时间</h2>
+        <h3>现在是：{{time}}</h3>
+        <hr>
+        <h3>计算属性实现</h3>
+        <h3>格式化后的时间：{{fmtTime}}</h3>
+        <hr>
+        <h3>methods实现</h3>
+        <h3>格式化后的时间：{{methodsTime()}}</h3>
+        <hr>
+        <h3>过滤器实现</h3>
+        <h3>格式化后的时间：{{time | timeFormater}}</h3>
+        <h3>过滤器实现（传参）</h3>
+        <h3>格式化后的时间：{{time | timeFormater('YYYY_MM_DD') | mySlice}}</h3>
+        <h3 v-bind:x="msg | mySlice">尚硅谷</h3>
+    </div>
+
+    <div id="root2">
+        <h2>{{msg | mySlice}}</h2>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+        // 全局过滤器
+        Vue.filter('mySlice', function (value) {
+            return value.slice(0, 4)
+        })
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                time: 1766127430626,
+                msg:'你好，尚硅谷'
+            },
+            computed: {
+                fmtTime: {
+                    get() {
+                        return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                    }
+                }
+            },
+            methods: {
+                methodsTime() {
+                    return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                }
+            },
+            // 局部过滤器
+            filters: {
+                timeFormater(value, str = 'YYYY-MM-DD HH:mm:ss') {
+                    return dayjs(value).format(str)
+                }
+            }
+        })
+
+        const vm2 = new Vue({
+            el: '#root2',
+            data: {
+                msg: 'hello Jie'
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
