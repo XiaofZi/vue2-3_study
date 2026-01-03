@@ -2522,3 +2522,131 @@ v-for指令：
    ```
 
    
+
+## 3.v-cloak指令
+
+v-cloak指令（没有值）：
+
+	1. 本质是一个特殊属性，Vue实例创建完毕并接管容器后，会删掉v-cloak属性。
+	1. 使用css配合v-cloak可以解决网速慢时页面展示出{{xxx}}的问题。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+
+    </title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        <h2 v-cloak>{{name}}</h2>
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                name:'尚硅谷'
+            }
+        })
+     </script>
+</body>
+<style>
+    [v-cloak]{
+        display: none;
+    }
+</style>
+</html>
+```
+
+## 4.v-once指令
+
+ 	1. v-once所在节点在初次动态渲染后，就视为静态内容了。
+ 	2. 以后数据的改变不会引起v-once所在结构的更新，可以用于优化性能。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2 v-once>初始化的n值是：{{n}}</h2>
+        <h2>当前n是：{{n}}</h2>
+        <button @click="n++">n+1</button>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                n: 1
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 5.v-pre指令
+
+	1. 跳过所在节点的编译过程。
+	1. 可利用它跳过：没有使用指令语法，没有使用插值语法的节点，会加快编译。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2 v-pre>Vue其实很简单</h2>
+        <h2 v-pre>当前n是：{{n}}</h2>
+        <button v-pre @click="n++">n+1</button>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                n: 1
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
