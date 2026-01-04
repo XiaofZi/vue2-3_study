@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2 v-bind:style="{opacity: opacity}">欢迎学习vue</h2>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                opacity: 1
+            },
+            methods: {
+                
+            },
+            // Vue完成模板的解析并把初识的真实dom元素放入页面后（挂载完毕）调用mounted
+            mounted() {    
+                    setInterval(() => {
+                        this.opacity -= 0.01
+                        if (this.opacity <= 0) {
+                            this.opacity = 1
+                        }
+                    }, 16);               
+            },
+        })
+
+        // 通过外部的定时器实现（不推荐）
+        // setInterval(() => {
+        //     vm.opacity -= 0.01
+        //     if (vm.opacity <= 0) {
+        //         vm.opacity = 1
+        //     }
+        // }, 16);
+    </script>
+</body>
+
+</html>

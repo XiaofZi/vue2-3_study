@@ -212,7 +212,7 @@ Vue中有2种数据绑定的方法：
 
 3. 一个重要的原则：
 
-   	由Vue管理的函数，一定不要写箭头函数，一旦写了箭头函数，this就不再是Vue实例了。
+   由Vue管理的函数，一定不要写箭头函数，一旦写了箭头函数，this就不再是Vue实例了。
 
 ```html
 <!DOCTYPE html>
@@ -2782,6 +2782,120 @@ v-cloak指令（没有值）：
             }
         })
     </script>
+</body>
+</html>
+```
+
+# 17、生命周期
+
+## 1.引出生命周期
+
+1. 又名：生命周期回调函数，生命周期函数，生命周期钩子
+2. 是什么：Vue在关键时刻帮我们调用的一些特殊名称的函数
+3. 生命周期函数的名字不可更改，但函数的具体内容是程序员根据需求编写的
+4. 生命周期函数中的this指向是vm  或  组件实例对象
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2 v-bind:style="{opacity: opacity}">欢迎学习vue</h2>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                opacity: 1
+            },
+            methods: {
+                
+            },
+            // Vue完成模板的解析并把初识的真实dom元素放入页面后（挂载完毕）调用mounted
+            mounted() {    
+                    setInterval(() => {
+                        this.opacity -= 0.01
+                        if (this.opacity <= 0) {
+                            this.opacity = 1
+                        }
+                    }, 16);               
+            },
+        })
+
+        // 通过外部的定时器实现（不推荐）
+        // setInterval(() => {
+        //     vm.opacity -= 0.01
+        //     if (vm.opacity <= 0) {
+        //         vm.opacity = 1
+        //     }
+        // }, 16);
+    </script>
+</body>
+
+</html>
+```
+
+## 2.分析生命周期
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        <h2>当前的n:{{n}}</h2>
+        <button @click="addN">n++</button>
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                n:1
+            },
+            methods: {
+                addN(){
+                    this.n += 1;
+                }
+            },
+            beforeCreate() {
+                console.log('beforeCreate');               
+            },
+            created() {
+                console.log('created');                
+            },
+            beforeMount() {
+                console.log('beforeMount');               
+            },
+            mounted() {
+                console.log(mounted);               
+            },
+        })
+     </script>
 </body>
 </html>
 ```
