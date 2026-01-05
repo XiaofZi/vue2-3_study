@@ -2900,3 +2900,71 @@ v-cloak指令（没有值）：
 </html>
 ```
 
+## 3.总结
+
+常用的生命周期钩子：
+
+1. mounted：发送Ajax请求，启动定时器，绑定自定义事件，订阅消息等【初始化操作】
+2. beforeDestory：清除定时器、解绑自定义事件、取消订阅消息等【收尾工作】
+
+
+
+关于销毁Vue实例
+
+1. 销毁后借助Vue开发者工具看不到任何信息
+2. 销毁后自定义事件会失效，但原生DOM事件依然有效
+3. 一般不会在beforeDestory操作数据，因为即便操作数据，也不会再触发更新流程。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2 v-bind:style="{opacity: opacity}">欢迎学习vue</h2>
+        <button @click="stop">停止变化</button>
+        <button @click="opacity = 1">透明度设置为1</button>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                opacity: 1
+            },
+            methods: {
+                stop() {
+                    this.$destroy()
+                }
+            },
+            // Vue完成模板的解析并把初识的真实dom元素放入页面后（挂载完毕）调用mounted
+            mounted() {
+                this.timer = setInterval(() => {
+                    this.opacity -= 0.01
+                    if (this.opacity <= 0) {
+                        this.opacity = 1
+                    }
+                }, 16);
+            },
+            beforeDestroy() {
+                clearInterval(this.timer)
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
