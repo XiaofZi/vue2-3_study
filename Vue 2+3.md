@@ -3003,3 +3003,144 @@ Vue中使用组件的三大步骤：
 
 ​	\<school>\</school>
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <!-- 3.编写组件标签 -->
+        <school></school>
+        <hr>
+        <!-- 3.编写组件标签 -->
+        <student></student>
+        <hr>
+        <hello></hello>
+    </div>
+
+    <div id="root2">
+        <hello></hello>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+
+        // 1.创建school组件
+        const sch = Vue.extend({
+            template: `
+                <div>
+                    <h2>学校名称：{{name}}</h2>
+                    <h2>学校地址：{{address}}</h2>
+                    <button @click="showName">点我提示学校名字</button>
+                </div>
+                    `,
+            data() {
+                return {
+                    name: 'sgg',
+                    address: '北京'
+                }
+            },
+            methods: {
+                'showName'() {
+                    alert(this.name)
+                }
+            },
+        })
+        // 1.创建student组件
+        const stu = Vue.extend({
+            template: `
+                <div>
+                     <h2>学生名称：{{name}}</h2>
+                     <h2>学生年龄：{{age}}</h2>
+                </div>
+                     `,
+            data() {
+                return {
+                    name: '张三',
+                    age: 18
+                }
+            }
+        })
+        // 1.创建hello组件
+        const hello = Vue.extend({
+            template: `
+                <div>
+                     <h2>你好啊{{name}}</h2>                     
+                </div>
+                     `,
+            data() {
+                return {
+                    name: '张三'
+                }
+            }
+        })
+
+        // 2.全局注册组件
+        Vue.component('hello', hello)
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            // 2.注册组件(局部注册)
+            components: {
+                school: sch,
+                student: stu
+            }
+        })
+
+        // 创建vue实例
+        const vm2 = new Vue({
+            el: '#root2',
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+## 2.几个注意点
+
+1. 关于组件名：
+
+​		一个单词组成：	
+
+​			第一种写法（首字母小写）：school
+
+​			第二种写法（首字母大写）：School
+
+​		多个单词组成：
+
+​			第一种写法（kebab-case命名）：my-school
+
+​			第二种写法（CamelCase命名）：MySchool（需要Vue脚手架支持）
+
+​		备注：
+
+​			（1）组件名尽可能回避HTML中已有的元素名称，例如: h2,H2都不行
+
+​			（2）可以使用name配置项指定组件在开发者工具中呈现的名字
+
+2. 关于组件标签：
+
+​		第一种写法：\<school>\</school>
+
+​		第二种写法：\</school>
+
+3. 一个简写方式：	
+
+```html
+const school = Vue.extend(options)可以简写为：sonst school = options
+```
+

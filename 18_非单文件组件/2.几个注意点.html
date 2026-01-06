@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2>{{msg}}</h2>
+        <!-- 3.编写组件标签 -->
+        <school></school>
+        <hr>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        const sch = Vue.extend({
+            name:'atguigu',
+            template: `
+                <div>
+                    <h2>学校名称：{{name}}</h2>
+                    <h2>学校地址：{{address}}</h2>
+                    <button @click="showName">点我提示学校名字</button>
+                </div>
+                    `,
+            data() {
+                return {
+                    name: 'sgg',
+                    address: '北京'
+                }
+            },
+            methods: {
+                'showName'() {
+                    alert(this.name)
+                }
+            },
+        })
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                msg:'学习Vue'
+            },
+            // 2.注册组件(局部注册)
+            components: {
+                school: sch,
+            }
+        })
+    </script>
+</body>
+
+</html>
