@@ -3144,3 +3144,285 @@ Vue中使用组件的三大步骤：
 const school = Vue.extend(options)可以简写为：sonst school = options
 ```
 
+## 3.组件的嵌套
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <h2>{{msg}}</h2>
+        <!-- 3.编写组件标签 -->
+        <app></app>
+        <hr>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 定义hello组件
+        const hello = Vue.extend({
+            template: `
+            <div>
+                <h2>{{msg}}</h2>
+            </div>
+            `,
+            data() {
+                return {
+                    msg: 'hello'
+                }
+            },
+        })
+
+        // 定义student组件
+        const stu = Vue.extend({
+            template: `
+                <div>
+                    <h2>名字：{{name}}</h2>
+                    <h2>年龄：{{age}}</h2>
+                </div>
+            `,
+            data() {
+                return {
+                    name: '张三',
+                    age: 18
+                }
+            }
+        })
+
+        const sch = Vue.extend({
+            name: 'xuexiao',
+            template: `
+                <div>
+                    <h2>学校名称：{{name}}</h2>
+                    <h2>学校地址：{{address}}</h2>
+                    <student></student>
+                </div>
+                    `,
+            data() {
+                return {
+                    name: 'sgg',
+                    address: '北京'
+                }
+            },
+            // 2.注册组件(局部注册)
+            components: {
+                student: stu
+            },
+        })
+
+        // 定义app组件
+        const app = Vue.extend({
+            template:`
+                <div>
+                    <school></school>
+                    <hello></hello>
+                </div>
+            `,
+            components: {
+                school: sch,
+                hello: hello
+            }
+        })
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                msg: '学习Vue'
+            },
+            // 2.注册组件(局部注册)
+            components: {
+                app:app
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 4.VueComponent
+
+1. school组件本质是一个名为VueComponent的构造函数，且不是程序员定义的，是Vue.extend生成的。
+2. 我们只需要写\<school/>或\<school>\</school>，Vue解析时会帮我们创建school组件的实例对象。
+3. 特别注意：每次调用Vue.extend，返回的都是一个全新的Vue.Component！！！
+4. 关于this指向：
+
+​	（1）组件配置中：
+
+​		data函数，methods中的函数，watch中的函数，computed中的函数，他们的this均是【VueComponent实例对象】
+
+​	（2）new Vue()配置中
+
+​		data函数，methods中的函数，watch中的函数，computed中的函数，他们的this均是【Vue实例对象】
+
+5. VueComponent的实例对象，以后简写vc（也可称之为：组件实例对象）
+
+   Vue的实例对象，以后简称vm
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <school></school>
+        <hello></hello>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 定义school组件
+        const sch = Vue.extend({
+            template: `
+            <div>
+                <h2>名字：{{name}}</h2>
+                <h2>地址：{{address}}</h2>
+                <button @click="showName">点我提示学校名字</button>
+            </div>
+            `,
+            data() {
+                return {
+                    name: 'sgg',
+                    address: 'beijing'
+                }
+            },
+            methods: {
+                'showName'() {
+                    console.log('showname',this);
+                    
+                }
+            },
+        })
+        console.log(sch);
+        
+        // 定义hello组件
+        const hello = Vue.extend({
+            template: `
+            <div>
+                <h2>{{msg}}</h2>
+            </div>
+            `,
+            data() {
+                return {
+                    msg: 'hello'
+                }
+            },
+        })
+        console.log(hello);
+        
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+
+            },
+            components: {
+                school: sch,
+                hello:hello
+            }
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 5.一个重要的内置关系
+
+1. 一个重要的内置关系
+
+```html
+VueComponent.prototype.__proto__ ===Vue.prototype
+```
+
+2. 为什么要有这个关系：让组件实例对象（vc）可以访问到Vue原型上的属性、方法。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>  
+    <!-- 准备好一个容器 -->
+     <div id="root">
+        
+     </div>
+
+     <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+                // 1.创建school组件
+        const sch = Vue.extend({
+            template: `
+                <div>
+                    <h2>学校名称：{{name}}</h2>
+                    <h2>学校地址：{{address}}</h2>
+                </div>
+                    `,
+            data() {
+                return {
+                    name: 'sgg',
+                    address: '北京'
+                }
+            },
+        })
+
+        // console.log(sch.prototype.__proto__ === Vue.prototype);    // true
+        
+
+        // 定义一个构造函数
+        // function demo(){
+        //     this.a = 1
+        //     this.b = 2
+        // }
+        // // 创建一个demo的实例对象
+        // const d = new demo()
+        // console.log(demo.prototype);  // 显示原型属性
+        // console.log(d.__proto__);     // 隐式原型属性
+        // console.log(demo.prototype === d.__proto__);
+        
+        // // 程序员通过显示原型属性操作原型对象，追加一个x属性，值为99
+        // demo.prototype.x = 99
+        // console.log('@',d.__proto__.x);
+        // console.log('@',d);
+        
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',  
+            data: {
+                msg:'hello'
+            }
+        })
+     </script>
+</body>
+</html>
+```
+

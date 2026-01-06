@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!-- 引入vue -->
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+
+<body>
+    <!-- 准备好一个容器 -->
+    <div id="root">
+        <school></school>
+        <hello></hello>
+    </div>
+
+    <script type="text/javascript">
+        Vue.config.productionTip = false  //阻止vue在启动时生成生产提示
+
+        // 定义school组件
+        const sch = Vue.extend({
+            template: `
+            <div>
+                <h2>名字：{{name}}</h2>
+                <h2>地址：{{address}}</h2>
+                <button @click="showName">点我提示学校名字</button>
+            </div>
+            `,
+            data() {
+                return {
+                    name: 'sgg',
+                    address: 'beijing'
+                }
+            },
+            methods: {
+                'showName'() {
+                    console.log('showname',this);
+                    
+                }
+            },
+        })
+        console.log(sch);
+        
+        // 定义hello组件
+        const hello = Vue.extend({
+            template: `
+            <div>
+                <h2>{{msg}}</h2>
+            </div>
+            `,
+            data() {
+                return {
+                    msg: 'hello'
+                }
+            },
+        })
+        console.log(hello);
+        
+
+        // 创建vue实例
+        const vm = new Vue({
+            el: '#root',
+            data: {
+
+            },
+            components: {
+                school: sch,
+                hello:hello
+            }
+        })
+    </script>
+</body>
+
+</html>
