@@ -3426,9 +3426,50 @@ VueComponent.prototype.__proto__ ===Vue.prototype
 </html>
 ```
 
-# 1、单文件组件
+# 19、单文件组件
 
 1. 创建school.vue等组件文件并暴露出去
 2. 在App.vue文件中调用其他组件文件并做响应的处理，然后暴露出去
 3. 在main.js（入口文件）中创建vm实例对象并绑定服务的容器
 4. 在index.html引入main.js并使用App组件（或者在main.js中通过template配置项使用App）
+
+## 1.使用vite构建vue2项目
+
+老师教程里用的是cli(https://cli.vuejs.org/zh/)，现在是2026.1.7 使用vite构建项目
+
+```
+#1.创建vue2项目
+npm create vue@legacy
+
+#2.安装 Vite 和 Vue 2 的兼容插件
+npm install vite --save-dev
+npm install vite-plugin-vue2 --save-dev
+```
+
+下面这个文件是main.js
+
+```js
+// main.js
+// 该文件是整个项目的入口文件
+// 引入vue
+import Vue from 'vue'
+// 引入App组件，他是所有组件的父组件
+import App from './App.vue'
+
+import './assets/main.css'
+
+// 创建Vue实例对象---vm
+new Vue({
+  // el的第一种写法
+  // el:'#app',
+  // 下面这行代码一会解释，完成了这个功能：将App组件放入容器中
+  render: (h) => h(App)
+}).$mount('#app') // el的第二种写法
+
+```
+
+**一个小错误**：浏览器的控制台一直提示School和Student组件未注册，检查发现路径没问题，组件名也全都相同，没有错误。
+
+最后发现是App.vue文件中注册组件时的components配置，少打了一个字母s ,写成了component
+
+导致出现的问题。
