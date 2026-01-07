@@ -3426,3 +3426,9 @@ VueComponent.prototype.__proto__ ===Vue.prototype
 </html>
 ```
 
+# 1、单文件组件
+
+1. 创建school.vue等组件文件并暴露出去
+2. 在App.vue文件中调用其他组件文件并做响应的处理，然后暴露出去
+3. 在main.js（入口文件）中创建vm实例对象并绑定服务的容器
+4. 在index.html引入main.js并使用App组件（或者在main.js中通过template配置项使用App）
