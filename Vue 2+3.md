@@ -3473,3 +3473,9 @@ new Vue({
 最后发现是App.vue文件中注册组件时的components配置，少打了一个字母s ,写成了component
 
 导致出现的问题。
+
+## 2.render函数
+
+1. vue.js是完整版的Vue，包含：核心功能+模板解析器。
+2. vue.runtime.xxx.js是运行版的Vue，只包含：核心功能，没有模板解析器
+3. 因为vue.runtime.xxx.js没有模板解析器，所以不能使用template配置项，需要使用render函数接收到的createElement函数去指定具体内容。
