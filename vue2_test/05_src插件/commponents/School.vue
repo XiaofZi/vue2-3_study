@@ -1,6 +1,6 @@
 <template>
-    <div class="demo">
-        <h2>名字：{{ name }}</h2>
+    <div>
+        <h2>名字：{{ name | mySlice }}</h2>
         <h2>地址：{{ address }}</h2>
     </div>
 </template>
@@ -17,9 +17,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-    .demo{
-        background-color: skyblue;
-    }
-</style>

@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <h2 @click="showName">名字：{{ name }}</h2>
+    <div class="demo">
+        <h2 class="title">名字：{{ name }}</h2>
         <h2>性别：{{ sex }}</h2>
     </div>
 </template>
 
 <script>
-// 引入一个混合,局部引入
-// import { mixin,mixin2 } from '../mixin';
 export default {
     name: 'Student',
     data() {
@@ -16,6 +14,11 @@ export default {
             sex: '男'
         }
     },
-    // mixins:[mixin,mixin2]
 }
 </script>
+
+<style scoped>
+    .demo{
+        background-color: aliceblue;
+    }
+</style>
