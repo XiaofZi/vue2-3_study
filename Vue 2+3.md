@@ -3519,3 +3519,186 @@ export default {
 </script>
 ```
 
+# 21、props属性
+
+功能：让组件接收外部传过来的数据
+
+备注：props是只读的，Vue底层会监测你对props的修改，如果进行了修改，就会发出警告，
+
+​	   若业务需求确实需要修改，那么请复制props的内容到data中一份，然后去修改data中的数据
+
+```vue
+<template>
+    <div>
+        <School name="李四" sex="女" v-bind:age="18"/>
+        <hr>
+        <School name="张三" sex="男" :age="19"/>
+    </div>
+</template>
+
+<script>
+// 引入School
+import School from './commponents/Student.vue';
+export default {
+    name: 'App',
+    components: {
+        School
+    },
+
+}
+</script>
+```
+
+```vue
+<template>
+    <div>
+        <h1>{{ msg }}</h1>
+        <h2>名字：{{ name }}</h2>
+        <h2>性别：{{ sex }}</h2>
+        <h2>年龄：{{ myAge }}</h2>
+        <button @click="changeAge">尝试修改收到的年龄</button>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'Student',
+    // props的优先级高于data，先准备props，再准备data，所以下面的myAge: this.age，拿到的就是外部传进来的age
+    data() {
+        return {
+            msg: '欢迎学习vue',
+            myAge: this.age
+        }
+    },
+    // 1、简单声明接收
+    // props:['name','age','sex'],
+
+    // 2、接收的同时对数据进行类型限制
+    // props:{
+    //     name:String,
+    //     age:Number,
+    //     sex:String
+    // }
+
+    // 3、接收的同时对数据进行类型限制+默认值的指定+必要性的限制
+    props: {
+        name: {
+            type: String,  //name的类型是字符串
+            required: true //name是必要的，必须传过来
+        },
+        age: {
+            type: Number,
+            default: 99    //默认值是99
+        },
+        sex: {
+            type: String,
+            required: true
+        }
+    },
+    methods: {
+        // 如果这里的方法修改的是外部传进来的age，虽然浏览器显示的数据会改变，但是控制台会报警告，不允许修改外部传进来的数据
+        // 所以采用这个方法：在data中另外定义一个属性myAge，值是接收的 传进来的age,然后用下面的方法修改这个myAge，并且使用的时候也使用myAge.
+        // 相当于增加了一层数据赋值
+        changeAge() {
+            this.myAge ++
+        }
+    }
+}
+</script>
+
+```
+
+# 22、mixin（混入）
+
+功能：可以把多个组件共用的配置提取成一个混入对象
+
+使用方式：
+
+​	第一步定义混合，例如：	
+
+```vue
+{
+	data(){....},
+	methods:{....},
+	....
+}
+```
+
+​	第二步使用混合，例如：
+
+```vue
+（1）在main.js中全局混入：Vue.mixin(xxx)
+（2）在使用混入的组件中局部混入：mixins:['xxx']
+```
+
+定义混合文件：
+
+```js
+export const mixin = {
+    methods: {
+        showName() {
+            alert(this.name)
+        }
+    },
+    mounted() {
+        console.log('hello');
+    },
+}
+
+export const mixin2 = {
+    data() {
+        return {
+            x:100,
+            y:200
+        }
+    },
+}
+```
+
+在main.js中全局混入
+
+```js
+// 引入Vue和App
+import Vue from "vue";
+import App from "./App.vue";
+// 关闭Vue的生产提示
+Vue.config.productionTip = false
+// 全局引入混合,所有的vc和vm都会有混合
+import { mixin,mixin2 } from './mixin';
+Vue.mixin(mixin)
+Vue.mixin(mixin2)
+
+// 创建vm
+new Vue({
+    el:'#app',
+    render: h => h(App)
+})
+```
+
+在Student组件中单独混入
+
+```vue
+<template>
+    <div>
+        <h2 @click="showName">名字：{{ name }}</h2>
+        <h2>性别：{{ sex }}</h2>
+    </div>
+</template>
+
+<script>
+// 引入一个混合,局部引入
+// import { mixin,mixin2 } from '../mixin';
+export default {
+    name: 'Student',
+    data() {
+        return {
+            name: '张三',
+            sex: '男'
+        }
+    },
+    // mixins:[mixin,mixin2]
+}
+</script>
+
+```
+
