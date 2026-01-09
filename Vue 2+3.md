@@ -3764,3 +3764,23 @@ export default {
 作用：让样式在局部生效，防止冲突
 
 写法：\<style scoped>
+
+在App.vue文件中写的css代码，如下所示，那么 title这个类名的style样式 将会作用于 其他所有的vue组件文件
+
+如果在App.vue的style标签上添加scoped属性，那么在App.vue文件中的css代码只会作用于App.vue这一个文件
+
+```css
+.title{
+	color:red
+}
+```
+
+
+
+# 25、TodoList
+
+## 1.拆分静态页面
+
+把老师提供的 html  css 源码先全部粘贴在App.vue中
+
+按照结构拆分到对应的组件文件中。
