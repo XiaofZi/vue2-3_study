@@ -2,9 +2,9 @@
     <div id="root">
         <div class="todo-container">
             <div class="todo-wrap">
-                <MyHeader></MyHeader>
-                <MyList></MyList>
-                <MyFooter></MyFooter>
+                <MyHeader :addTodo="addTodo"></MyHeader>
+                <MyList :todos="todos" :checkTodo="checkTodo" :deleteTodo="deleteTodo"></MyList>
+                <MyFooter :todos="todos" :checkAllTodo="checkAllTodo" :claerAllTodo="claerAllTodo"></MyFooter>
             </div>
         </div>
     </div>
@@ -23,6 +23,45 @@ export default {
         MyFooter,
         MyList
     },
+    data() {
+        return {
+            todos: [
+                { id: '001', title: '吃饭', done: true },
+                { id: '002', title: '睡觉', done: false },
+                { id: '003', title: '打豆豆', done: true }
+            ]
+        }
+    },
+    methods:{
+        // 添加一个todo
+        addTodo(todoObj){
+            this.todos.unshift(todoObj)
+        },
+        // 勾选或者取消勾选一个todo
+        checkTodo(id){
+            this.todos.forEach((todo)=>{
+                if(todo.id === id) todo.done = !todo.done
+            }) 
+        },
+        // 删除一个todo
+        deleteTodo(id){
+            this.todos = this.todos.filter((todo)=>{
+                return todo.id != id
+            })
+        },
+        // 全选或者取消全选
+        checkAllTodo(done){
+            this.todos.forEach((todo)=>{ 
+                todo.done = done
+            })
+        },
+        // 清除所有已经完成的todo
+        claerAllTodo(){
+            this.todos = this.todos.filter((todo)=>{
+                return !todo.done
+            })
+        }
+    }
 }
 </script>
 
