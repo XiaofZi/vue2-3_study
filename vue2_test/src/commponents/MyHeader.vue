@@ -13,6 +13,7 @@ export default {
             title: ''
         }
     },
+    props: ['addTodo'],
     methods: {
         add(event) {
             // 第一种方法
@@ -27,8 +28,7 @@ export default {
             // console.log(this.title);
 
         }
-    },
-    props: ['addTodo']
+    }
 }
 </script>
 

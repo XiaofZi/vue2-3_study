@@ -3807,3 +3807,141 @@ export default {
 
 3. 使用v-model时要切记：v-model绑定的值不能是props传递过来的值，因为props是不可以修改的！
 4. props传过来的若是对象类型的值，修改对象中的属性时Vue不会报错，但不推荐这样做。
+
+# 26、浏览器本地存储
+
+localStorage与sessionStorage统称为webStorage
+
+1. 存储内容大小一般支持5Mb左右（不通浏览器有差别）
+2. 浏览器通过Windows.sessionStorage或者Windows.localStorage 属性来实现本地存储机制
+
+备注：	xxxxStorage.getItem(xxx)，如果xxx对应的value获取不到，那么getItem的返回值是null
+
+​	    	JSON.parse(null)的结果依然是null
+
+## 1.localStorage
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage</title>
+</head>
+
+<body>
+    <h2>localStorage</h2>
+    <button onclick="saveData()">点我保存一个数据</button>
+    <button onclick="readData()">点我读取一个数据</button>
+    <button onclick="deleteData()">点我删除一个数据</button>
+    <button onclick="deleteAllData()">点我清空数据</button>
+
+</body>
+<script type="text/javascript">
+    let p = {
+        'name': '张三',
+        'age': '18'
+    }
+	//保存一条数据
+    function saveData() {
+        localStorage.setItem('msg', 'hello')
+        localStorage.setItem('person', JSON.stringify(p))
+    }
+	//读取数据
+    function readData() {
+        let person = localStorage.getItem('person')
+        console.log(JSON.parse(person));
+
+    }
+	//删除一条数据
+    function deleteData() {
+        localStorage.removeItem('person')
+    }
+    //清空
+    function deleteAllData() {
+        localStorage.clear()
+    }
+</script>
+
+</html>
+```
+
+## 2.sessionStorage
+
+sessionStorage与localStorage的API一样，
+
+区别：	关闭浏览器后存在sessionStorage中数据  将会丢失
+
+​		   调用localStorage中清除数据的API会清除数据，或者用户清除浏览器缓存会清除数据
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sessionStorage</title>
+</head>
+
+<body>
+    <h2>sessionStorage</h2>
+    <button onclick="saveData()">点我保存一个数据</button>
+    <button onclick="readData()">点我读取一个数据</button>
+    <button onclick="deleteData()">点我删除一个数据</button>
+    <button onclick="deleteAllData()">点我清空数据</button>
+
+</body>
+<script type="text/javascript">
+    let p = {
+        'name': '张三',
+        'age': '18'
+    }
+	//保存一条数据
+    function saveData() {
+        sessionStorage.setItem('msg', 'hello')
+        sessionStorage.setItem('person', JSON.stringify(p))
+    }
+	//读取数据
+    function readData() {
+        let person = sessionStorage.getItem('person')
+        console.log(JSON.parse(person));
+
+    }
+	//删除一条数据
+    function deleteData() {
+        sessionStorage.removeItem('person')
+    }
+    //清空
+    function deleteAllData() {
+        sessionStorage.clear()
+    }
+</script>
+
+</html>
+```
+
+# 27、TodoList本地存储
+
+将todos数据存在浏览器 本地（localStorage)中
+
+使用watch属性监视todos数组，当数组发生改变时，将新数组存在localStorage
+
+使用监视的时候要使用**深度监视**。因为普通监视，监视不到todos.done的改变
+
+
+
+读取本地的todos数组，如果数组为空，会引起MyFooter组件中todos.length处的代码bug，因为空数组没有length属性
+
+所以下面的初始化todos代码中如果浏览器本地没有数据，那么就使用空数组。空数组是有length属性的。
+
+```vue
+data() {
+    return {
+        todos: JSON.parse(localStorage.getItem('todos')) || []
+    }
+},
+```
+

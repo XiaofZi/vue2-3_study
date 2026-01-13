@@ -25,41 +25,45 @@ export default {
     },
     data() {
         return {
-            todos: [
-                { id: '001', title: '吃饭', done: true },
-                { id: '002', title: '睡觉', done: false },
-                { id: '003', title: '打豆豆', done: true }
-            ]
+            todos: JSON.parse(localStorage.getItem('todos')) || []
         }
     },
-    methods:{
+    methods: {
         // 添加一个todo
-        addTodo(todoObj){
+        addTodo(todoObj) {
             this.todos.unshift(todoObj)
         },
         // 勾选或者取消勾选一个todo
-        checkTodo(id){
-            this.todos.forEach((todo)=>{
-                if(todo.id === id) todo.done = !todo.done
-            }) 
+        checkTodo(id) {
+            this.todos.forEach((todo) => {
+                if (todo.id === id) todo.done = !todo.done
+            })
         },
         // 删除一个todo
-        deleteTodo(id){
-            this.todos = this.todos.filter((todo)=>{
+        deleteTodo(id) {
+            this.todos = this.todos.filter((todo) => {
                 return todo.id != id
             })
         },
         // 全选或者取消全选
-        checkAllTodo(done){
-            this.todos.forEach((todo)=>{ 
+        checkAllTodo(done) {
+            this.todos.forEach((todo) => {
                 todo.done = done
             })
         },
         // 清除所有已经完成的todo
-        claerAllTodo(){
-            this.todos = this.todos.filter((todo)=>{
+        claerAllTodo() {
+            this.todos = this.todos.filter((todo) => {
                 return !todo.done
             })
+        }
+    },
+    watch:{
+        todos:{
+            deep:true,
+            handler(value){
+                localStorage.setItem('todos',JSON.stringify(value))
+            }
         }
     }
 }
