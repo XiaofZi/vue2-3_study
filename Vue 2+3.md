@@ -3945,3 +3945,171 @@ data() {
 },
 ```
 
+# 28、组件的自定义事件
+
+1. 一种组件间通信的方式，适用于：**子组件 ===> 父组件**
+
+2. 使用场景：A是父组件，B是子组件，B想给A传递数据，那么就要在A中给B绑定自定义事件（事件的回调在A中）。
+
+3. 绑定自定义事件：
+
+   1. 第一种方式，在父组件\<Demo @atguigu="test"/>或\<Demo v-on:atguigu="test"/>
+
+   2. 第二种方式，在父组件中
+
+      ```
+      <Demo ref="demo">
+      ......
+      	mounted(){
+      		this.$refs.xxx.$on('atguigu',this.test)
+      	}
+      ```
+
+   3. 若想让自定义事件只能触发一次，可以使用once修饰符，或$once方法
+
+4. 触发自定义事件：`this.$emit('atguigu',数据)`
+
+5. 解绑自定义事件：`this.$off('atguigu')`，解绑多个就写成数组，什么都不写就是解绑全部的自定义事件
+
+6. 组件上也可以绑定原生DOM事件，需要使用native修饰符。
+
+7. 注意：通过`this.$refs.xxx.$on('atguigu'，回调)`绑定自定义事件时，回调要么配置在methods中，要么用箭头函数，否则this指向会出问题。
+
+```vue
+<template>
+    <div class="student">
+        <h2>名字：{{ name }}</h2>
+        <h2>年龄：{{ age }}</h2>
+        <h2>num:{{ num }}</h2>
+        <button @click="add">n++</button>
+        <button @click="sendStudentName">给App发送学生名字</button>
+        <button @click="unbind">解绑自定义事件</button>
+        <button @click="death">销毁当前Student组件的实例（vc）</button>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'Student',
+    data() {
+        return {
+            name: '张三',
+            age: 18,
+            num: 1
+        }
+    },
+    methods: {
+        sendStudentName() {
+            // 绑定自定义事件
+            this.$emit('atguigu', this.name, 66, 88, 99)
+            this.$emit('demo')
+        },
+        unbind() {
+            // 解绑一个自定义事件
+            this.$off('atguigu')
+            // 解绑多个自定义事件
+            // this.$off(['atguigu', 'demo'])
+            // 所有的自定义事件全部解绑
+            // this.$off()
+        },
+        // 销毁当前Student组件的实例，销毁后所有Student实例的自定义事件全都不奏效了
+        death() {
+            this.$destroy()
+        },
+        add(){
+            this.num++
+            console.log('add回调被调用了');
+            
+        }
+    }
+}
+</script>
+
+<style scoped>
+.student {
+    background-color: pink;
+}
+</style>
+
+```
+
+```vue
+<template>
+    <div class="app">
+        <h1>{{ msg }}，学生姓名是：{{ studentName }}</h1>
+
+        <!-- 通过父组件给子组件传递 函数类型的props实现：子组件给父组件传递数据 -->
+        <School :getSchoolName="getSchoolName" />
+
+        <!-- 通过父组件给子组件 绑定一个自定义事件实现：子组件给父组件传递数据（第一种写法，使用@或者v-on） -->
+        <!-- <Student v-on:atguigu="getStudentName" /> -->
+        <!-- <Student @atguigu="getStudentName" /> -->
+        <!-- <Student @atguigu.once="getStudentName" /> -->
+
+        <!-- 通过父组件给子组件 绑定一个自定义事件实现：子组件给父组件传递数据（第二种写法，使用ref) -->
+        <!-- 这种方法更灵活一点，例如下面，增加了一个定时器，3秒之后再绑定事件 -->
+        <!-- 第一种方法直接绑定了自定义事件atguigu，
+         第二种方法类似于：‘声明’vc上有atguigu自定义事件，我不写这段声明，那么就没有这个自定义事件 
+         但是这个‘声明’写在声明周期里，这样就有空间进行其他操作，例如增加定时器
+         -->
+        <Student ref="student" @demo="m1" @click,native="show"/>
+    </div>
+</template>
+
+<script>
+// 引入School
+import School from './commponents/School.vue';
+import Student from './commponents/Student.vue';
+export default {
+    name: 'App',
+    components: {
+        School,
+        Student
+    },
+    data() {
+        return {
+            msg:'你好',
+            studentName:''
+        }
+    },
+    methods: {
+        getSchoolName(name) {
+            console.log('学校名字',name);
+
+        },
+        getStudentName(name,...parmes) {
+            console.log('学生名字',name,parmes);
+            this.studentName = name
+        },
+        m1(){
+            console.log('demo事件被触发了');
+            
+        },
+        show(){
+            console.log('点击事件被触发了');
+            
+        }
+    },
+    mounted() {
+        setTimeout(() => {
+            console.log(this);
+            // 绑定自定义事件
+
+            // $on 当atguigu 被触发时
+            this.$refs.student.$on('atguigu', this.getStudentName)
+            // $once只能被触发一次
+            // this.$refs.student.$once('atguigu', this.getStudentName)
+        }, 3000);
+    }
+
+}
+</script>
+
+<style>
+.app {
+    background-color: grey;
+    padding: 5px;
+}
+</style>
+```
+

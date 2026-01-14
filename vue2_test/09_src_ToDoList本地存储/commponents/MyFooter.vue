@@ -14,7 +14,7 @@
 <script>
 export default {
     name: 'MyFooter',
-    props: ['todos'],
+    props: ['todos','checkAllTodo','claerAllTodo'],
     computed: {
         total() {
             return this.todos.length
@@ -33,19 +33,17 @@ export default {
             },
             // isAll被修改时set调用
             set(value){
-                // 自定义事件
-                this.$emit('checkAllTodo',value)
+                this.checkAllTodo(value)
             }
         }
     },
     methods: {
-        // checkAll(event) {
-        //     this.checkAllTodo(event.target.checked);
-        // },
+        checkAll(event) {
+            this.checkAllTodo(event.target.checked);
+        },
         clearAll() {
             if (confirm('确定删除吗？')) {
-                // this.claerAllTodo()
-                this.$emit('claerAllTodo')
+                this.claerAllTodo()
             }
         }
     }

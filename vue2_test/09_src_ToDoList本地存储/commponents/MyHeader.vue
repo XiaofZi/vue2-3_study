@@ -13,25 +13,19 @@ export default {
             title: ''
         }
     },
-    // props: ['addTodo'],
+    props: ['addTodo'],
     methods: {
         add(event) {
             // 第一种方法
             // console.log(event.target.value);
-            // 第二种方法
-            // console.log(this.title);
-
             // 将用户的输入包装成一个Todo对象
             let todoObj = { id: nanoid(), title: event.target.value, done: false }
-
-            // props写法
-            // this.addTodo(todoObj)
-
-            // 自定义事件写法
-            this.$emit('addTodo',todoObj)
+            // console.log(todoObj);
+            this.addTodo(todoObj)
             event.target.value = ''
 
-
+            // 第二种方法
+            // console.log(this.title);
 
         }
     }
