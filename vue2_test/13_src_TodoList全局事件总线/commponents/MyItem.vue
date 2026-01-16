@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import PubSub from 'pubsub-js';
 export default {
     name: 'MyItem',
     // 声明接收todo对象
@@ -29,10 +28,7 @@ export default {
             if (confirm('确定删除吗？')) {
                 // 通知App组件删除对应的todo项
                 // this.deleteTodo(id)
-                // this.$bus.$emit('deleteTodo', id)
-                
-                // 发布消息删除todo
-                PubSub.publish('deleteTodo', id)
+                this.$bus.$emit('deleteTodo', id)
             }
         }
     },

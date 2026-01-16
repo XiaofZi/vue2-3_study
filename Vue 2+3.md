@@ -3961,7 +3961,7 @@ data() {
       <Demo ref="demo">
       ......
       	mounted(){
-      		this.$refs.xxx.$on('atguigu',this.test)
+      		this.$refs.demo.$on('atguigu',this.test)
       	}
       ```
 
@@ -4113,3 +4113,67 @@ export default {
 </style>
 ```
 
+# 29、全局事件总线（GlobalEventBus)
+
+1. 一种组件间通信的方式，适用于任意组件间通信
+
+2. 安装全局事件总线:
+
+   ```js
+   new Vue({
+       el:'#app',
+       render: h => h(App),
+       // 安装全局事件总线  $bus就是当前应用的vm
+       beforeCreate(){
+           Vue.prototype.$bus = this
+       }
+   })
+   ```
+
+3. 使用事件总线
+
+   1. 接收数据：A组件想接收数据，则在A组件中给$bus绑定自定义事件，事件的**回调留在A组件自身**
+
+      ```js
+      methods(){
+          demo(data){
+              ......
+          }
+      }
+      ......
+      mounted(){
+          this.$bus.$on('xxx',this.demo)
+      }
+      ```
+
+   2. 提供数据：`this.$bus.$emit('xxx',数据)`
+
+4. 最好在beforeDestory钩子中，用$off去解绑当前组件所用到的事件。在父组件中解绑，也就是接收数据的组件中解绑
+
+
+
+# 30、消息订阅与发布（pubsub）
+
+1. 一种组件间通信的方式，适用于任意组件通信。
+
+2. 使用步骤
+
+   1. 安装pubsub：`npm i pubsub-js`
+
+   2. 引入：`import pubsub from 'pubsub-js'`
+
+   3. 接收数据：A组件想接收数据，则在A组件中订阅消息，订阅的
+
+      ```js
+      methods(){
+      	demo(data){......}
+      }
+      ......
+      mounted(){
+      	this.pid = pubsub.subscribe('xxx',this.demo) //订阅消息
+      }
+      ```
+
+   4. 提供数据：`pubsub.publish('xxx',数据)`
+
+   5. 最好在beforeDestory钩子中，用PubSub.unsubscribe(pid)去**取消订阅**

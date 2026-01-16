@@ -12,7 +12,6 @@
 
 <script>
 // 引入组件
-import PubSub from 'pubsub-js';
 import MyHeader from './commponents/MyHeader.vue';
 import MyFooter from './commponents/MyFooter.vue';
 import MyList from './commponents/MyList.vue';
@@ -41,7 +40,7 @@ export default {
             })
         },
         // 删除一个todo
-        deleteTodo(msgName,id) {
+        deleteTodo(id) {
             this.todos = this.todos.filter((todo) => {
                 return todo.id != id
             })
@@ -69,14 +68,10 @@ export default {
     },
     mounted(){
         this.$bus.$on('checkTodo',this.checkTodo)
-        // this.$bus.$on('deleteTodo',this.deleteTodo)
-        // 订阅消息实现删除todo
-        const pubId = PubSub.subscribe('deleteTodo',this.deleteTodo)
+        this.$bus.$on('deleteTodo',this.deleteTodo)
     },
     beforeDestroy(){
-        // this.$bus.$off(['checkTodo','deleteTodo'])
-        this.$bus.$off(['checkTodo'])
-        PubSub.unsubscribe(this.pubId)
+        this.$bus.$off(['checkTodo','deleteTodo'])
     }
 }
 </script>
