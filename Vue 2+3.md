@@ -4177,3 +4177,98 @@ export default {
    4. 提供数据：`pubsub.publish('xxx',数据)`
 
    5. 最好在beforeDestory钩子中，用PubSub.unsubscribe(pid)去**取消订阅**
+
+# 31、nextTick
+
+1. 语法：`this.$nextTick(回调函数)
+2. 作用：在下一次DOM更新结束后执行其指定的回调。
+3. 什么时候用：当改变数据后，要基于更新的新DOM进行某些操作时，要在nextTick所指定的回调函数中执行。
+
+# 32、过度与动画
+
+1. 作用：在插入、更新或移除DOM元素时，在合适的时候给元素添加样式类名。
+2. 图示：
+
+![image-20260119160652835](Vue 2+3.assets/image-20260119160652835.png)
+
+3. 写法
+
+   1. 准备好样式
+
+      - 元素进入时的样式：
+        1. v-enter：进入的起点
+        2. v-enter-active：进入过程中
+        3. v-enter-to：进入的终点
+      - 元素离开的样式
+        1. v-leave：离开的起点
+        2. v-leave-active：离开过程中
+        3. v-leave-to：离开的终点
+
+   2. 使用`<transition>`包裹要过度的元素，并配置name属性：
+
+      ```css
+      <Transition name="hello" appear>
+          <h1 v-show="isShow">你好啊</h1>
+      </Transition>
+      ```
+
+   3. 备注：若有多个元素需要过度，则需要使用：`<transition-group>`，并且每个元素都要指定key的值。
+
+# 33、Vue脚手架配置代理
+
+老师课程使用的cli脚手架构建的项目，我用的vite构建项目，所以配置方式和老师的不同
+
+vite配置代理的官网链接：https://cn.vitejs.dev/config/server-options#server-proxy
+
+在vite.config.js中按照官网的语法配置需要的代理即可。
+
+```js
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import legacy from '@vitejs/plugin-legacy'
+import vue2 from '@vitejs/plugin-vue2'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue2(),
+    legacy({
+      targets: ['ie >= 11'],
+      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
+    })
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  server: {
+    proxy: {
+      // 字符串简写写法：
+      // 代理地址 http://localhost:5173/api 
+      // 目标地址 http://localhost:5000/api
+      // '/api': 'http://localhost:5000',
+
+      // 带选项写法
+      '/api': {
+        target: 'http://localhost:5000',
+        // 用于控制请求头中的host值
+        changeOrigin: true,
+        // 请求地址重写，前端发向  /api  的请求会被重写为发向  /  这样就不用修改后端的接口地址
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/demo': {
+        target: 'http://localhost:5001',
+        // 用于控制请求头中的host值
+        changeOrigin: true,
+        // 请求地址重写，前端发向  /demo  的请求会被重写为发向  /  这样就不用修改后端的接口地址
+        rewrite: (path) => path.replace(/^\/demo/, ''),
+      },
+    },
+  },
+})
+
+```
+
+详细配置看官网
