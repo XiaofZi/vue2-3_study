@@ -4139,10 +4139,13 @@ export default {
           demo(data){
               ......
           }
-      }
+      },
       ......
       mounted(){
           this.$bus.$on('xxx',this.demo)
+      },
+      beforeDestory(){
+          this.$bus.$off('xxx')
       }
       ```
 
@@ -4272,3 +4275,34 @@ export default defineConfig({
 ```
 
 详细配置看官网
+
+
+
+# 34、github案例
+
+## 1.静态组件
+
+使用到bootstrap.css，将css文件放在/public/css文件夹中
+
+在Vite中，public目录下的文件在服务时，`public`这个目录名不会被包含在URL中。所以，无论base是什么，你都不应该在URL中写上`public`。
+
+因此在index.html引入的时候，不写public
+
+```html
+<!-- 引入Bootstrap.css -->
+ <link rel="stylesheet" href="/css/bootstrap.css">
+```
+
+但是我将项目部署在了一个子路径`/vue2_test/`下。
+
+因此在vite.config.js中修改了一下配置
+
+设置`base: './'`，那么所有资源的路径都会相对于当前HTML文件所在目录。这意味着如果你的应用部署在服务器的根目录，那么资源会从根目录加载；如果部署在子目录，那么资源会从该子目录加载。
+
+```js
+export default {
+  base: './',
+  publicDir: 'public'
+}
+```
+
