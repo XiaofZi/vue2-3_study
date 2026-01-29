@@ -4358,3 +4358,247 @@ export default {
    3. 作用于插槽
 
       1. 理解：数据在组件的自身，但根据数据生成的结构需要组件的使用者来决定。
+
+# 26、VueX
+
+## 1、简介
+
+1. 概念：专门在Vue中实现集中式状态（数据）管理的一个Vue插件，对Vue应用中多个组件的共享状态进行集中式的管理（读/写），也是一种组件间通信的方式，且适用于任意组件间通信。
+
+2. Github地址：https://github.com/vuejs/vuex
+
+   ![image-20260126153951944](Vue 2+3.assets/image-20260126153951944.png)
+
+## 2、VueX环境部署
+
+vue2项目要用Vuex3版本
+
+1. `npm i vuex@3`
+
+2. 新建/src/store/index.js文件
+
+3. ```js
+   // 该文件用于创建vuex中最为核心的store
+   
+   import Vue from "vue";
+   // 引入vuex
+   import Vuex from "vuex"
+   
+   // 使用插件
+   Vue.use(vuex)
+   // 引入VueX
+   import vuex from 'vuex';
+   
+   // 准备actions，用于响应组件中的动作
+   const actions = {
+       jia(context,value) {
+           context.commit('JIA',value)
+       },
+       jian(context,value){
+           context.commit('JIAN',value)
+       },
+       jiaOdd(context,value){
+           if (state.sum % 2) {
+               context.commit('JIAODD',value)
+           }
+       },
+       jiaWait(context,value){
+           setTimeout(() => {
+               context.commit('JIAWAIT',value)
+           }, 500);
+       }
+   }
+   
+   // 准备mutations，用于操作数据
+   const mutations = {
+       JIA(state,value){
+           state.sum += value
+       },
+       JIAN(state,value){
+           state.sum -= value
+       },
+       JIAODD(state,value){
+           state.sum += value
+       },
+       JIAWAIT(state,value){
+           state.sum += value
+       }
+   }
+   
+   // 准备state，用于存储数据
+   const state = {
+       sum: 0, //当前的和
+       school:'sgg',
+       subject:'前端'
+   }
+   
+   // 准备getters，用于将Store中的数据进行加工
+   const getters = {
+       bigSum(state){
+           return state.sum*10
+       }
+   }
+   // 创建Store
+   const store = new Vuex.Store({
+       actions: actions,
+       mutations,
+       state,
+       getters
+   })
+   
+   // 暴露store
+   export default store;
+   ```
+
+   
+
+## 3、核心概念和API
+
+1. **state**
+
+   vuex管理的状态（数据）对象，就是存储数据的地方
+
+   他应该是唯一的
+
+   
+
+2. **mutations**
+
+   直接操作state的地方，类似于写sql语句的地方
+
+   值是一个对象，包含多个直接更新 state 的方法
+
+   mutations 中方法的特点：不能写异步代码、只能单纯的操作 state
+
+   在 action 中使用：`commit('对应的 mutations 方法名')` 触发
+
+   
+
+3. **actions**
+
+   接收组件的调用，数据处理的逻辑写在这里
+
+   值为一个对象，包含多个响应用户动作的回调函数
+
+   通过 commit( )来触发 mutation 中函数的调用, 间接更新 state
+
+   
+
+   如何触发 actions 中的回调？
+
+   在组件中使用: 
+
+   `$store.dispatch('对应的 action 回调名') `
+
+   可以包含异步代码（定时器, ajax 等等）
+
+   
+
+4. **getters**
+
+   值为一个对象，包含多个用于返回数据的函数
+
+   如何使用？—— `$store.getters.xxx`‘
+
+   
+
+5. **mapState与mapGetters**
+
+6. **mapActions与mapMutations**
+
+​	
+
+# 27、路由
+
+理解：一个路由（route）就是一组映射关系（key-value），多个路由需要路由器（router）进行管理。
+
+前端路由：key是路径，value是组件
+
+
+
+## 1、基本使用
+
+1. 安装vue-router，在vue2项目中要指定版本，`npm i vue-router@3`
+
+2. 应用插件：Vue.use(VueRouter)
+
+3. 编写router配置项
+
+   ```js
+   // 该文件专门用于创建整个应用的路由器
+   import VueRouter from 'vue-router'
+   import About from "../components/About.vue"
+   import Home from "../components/Home.vue"
+   
+   // 创建并暴露一个路由器
+   export default new VueRouter({
+       routes: [
+           {
+               path: '/about',
+               component: About
+           },
+           {
+               path: '/home',
+               component: Home
+           }
+       ]
+   })
+   ```
+
+4. 实现切换（active-class可配置高亮样式）
+
+   ```html
+   <router-link class="list-group-item" active-class="active" to="/about">About</router-link>
+   ```
+
+5. 指定展示位置
+
+   ```html
+   <router-view></router-view>
+   ```
+
+
+
+**几个注意点**
+
+1. 路由组件通常存放在pages文件夹，一般组件通常存放在components文件夹
+2. 通过切换，”隐藏“了的路由组件，默认是被销毁掉的，需要的时候再去挂载。
+3. 每个组件都有自己的$route属性，里面存储着自己的路由信息。
+4. 整个应用只有一个router，可以通过组件的$router属性获取到。
+
+## 2、多级路由
+
+```js
+// 该文件专门用于创建整个应用的路由器
+import VueRouter from 'vue-router'
+import About from "../pages/About.vue"
+import Home from "../pages/Home.vue"
+import News from '../pages/News.vue'
+import Message from '../pages/Message.vue'
+
+
+// 创建并暴露一个路由器
+export default new VueRouter({
+    routes: [
+        {
+            path: '/about',
+            component: About
+        },
+        {
+            path: '/home',
+            component: Home,
+            children:[
+                {
+                    path:'news',
+                    component:News
+                },
+                {
+                    path:'message',
+                    component:Message
+                }
+            ]
+        }
+    ]
+})
+```
+
