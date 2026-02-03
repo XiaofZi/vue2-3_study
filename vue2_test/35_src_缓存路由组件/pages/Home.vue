@@ -10,7 +10,8 @@
                     <router-link class="list-group-item" active-class="active" to="/home/message">Message</router-link>
                 </li>
             </ul>
-            <!-- include属性的值是组件名，不是路由名 -->
+            <!-- include属性的值是组件名，不是路由名,多个就写数组形式 -->
+            <!-- <keep-alive include="['News','Message']"> -->
             <keep-alive include="News">
                 <router-view></router-view>
             </keep-alive>

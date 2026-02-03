@@ -9,14 +9,13 @@ import Detail from '../pages/Detail.vue'
 
 // 创建并暴露一个路由器
 const router = new VueRouter({
-    mode:'history',
     routes: [
         {
             name: 'guanyv',
             path: '/about',
             component: About,
             meta: {
-                isAuth: true,
+                isAuth: false,
                 title: '关于'
             }
         },
@@ -36,7 +35,7 @@ const router = new VueRouter({
                         isAuth: true,
                         title: '新闻'
                     },
-                    /* beforeEnter: (to, from, next) => {
+                    beforeEnter: (to, from, next) => {
                         if (to.meta.isAuth) {  // 判断是否需要路由鉴权
                             if (localStorage.getItem('school') === 'atguigu') {
                                 next()
@@ -45,7 +44,7 @@ const router = new VueRouter({
                         else {
                             next()
                         }
-                    } */
+                    }
                 },
                 {
                     name: 'xiaoxi',
@@ -95,9 +94,9 @@ const router = new VueRouter({
 // })
 
 // 全局后置路由守卫----每次路由切换之后被调用，初始化的时候被调用
-/* router.afterEach((to, from) => {
+router.afterEach((to, from) => {
     console.log('后置路由守卫', to, from);
     document.title = to.meta.title || 'vue2_study'
-}) */
+})
 
 export default router

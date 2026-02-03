@@ -10,11 +10,7 @@
                     <router-link class="list-group-item" active-class="active" to="/home/message">Message</router-link>
                 </li>
             </ul>
-            <!-- include属性的值是组件名，不是路由名 -->
-            <keep-alive include="News">
-                <router-view></router-view>
-            </keep-alive>
-
+            <router-view></router-view>
         </div>
     </div>
 </template>
@@ -28,10 +24,6 @@ export default {
     components: {
         Message,
         News,
-    },
-    beforeDestroy(){
-        console.log('news即将被销毁');
-        
     }
 }
 </script>
